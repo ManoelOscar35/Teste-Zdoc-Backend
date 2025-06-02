@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using GestaoPessoalApi.Data;
 using GestaoPessoalApi.Models;
@@ -82,7 +83,7 @@ namespace GestaoPessoalApi.Controllers
 		}
 
 		[HttpDelete("{id}")]
-		public IActionResult DeleteFuncionario(int id)
+		public async Task<IActionResult> DeleteFuncionario(int id)
 		{
 			var funcionario = _context.Funcionarios.Find(id);
 			if (funcionario == null)
@@ -90,18 +91,20 @@ namespace GestaoPessoalApi.Controllers
 				return NotFound();
 			}
 
-			// Deletar funcionário
-			_context.Funcionarios.Remove(funcionario);
-			_context.SaveChanges();
-
-			// Registrar a alteração
-			RegistrarAlteracao(
-				acao: "Delete",
-				usuario: usuarioLogado,
-				detalhes: $"Funcionário ID {id} deletado."
+			await RegistrarAlteracao(
+				id,
+				"Status",
+				funcionario.Status,
+				"Excluído"
 			);
 
+			// Opcional: marcar como inativo ou realmente excluir
+			_context.Funcionarios.Remove(funcionario);
+
+			await _context.SaveChangesAsync();
+
 			return NoContent();
+
 		}
 
 		private async Task RegistrarAlteracao(int funcionarioId, string campo, string valorAntigo, string valorNovo)
@@ -117,6 +120,21 @@ namespace GestaoPessoalApi.Controllers
 
 			_context.Historicos.Add(historico);
 			await _context.SaveChangesAsync();
+		}
+
+
+		// GET: api/funcionarios/media-salario
+		[HttpGet("media-salario")]
+		public async Task<ActionResult<decimal>> GetSalarioMedio()
+		{
+			// Se não houver funcionários cadastrados, evitamos erro de AverageAsync
+			var quantidade = await _context.Funcionarios.CountAsync();
+			if (quantidade == 0)
+				return Ok(0m); // ou NotFound(), a critério do seu design
+
+			// Calcula a média de todos os salários
+			var media = await _context.Funcionarios.AverageAsync(f => f.Salario);
+			return Ok(media);
 		}
 	}
 }
