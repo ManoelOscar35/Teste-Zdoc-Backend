@@ -47,37 +47,89 @@ namespace GestaoPessoalApi.Controllers
 			return CreatedAtAction(nameof(GetFuncionario), new { id = funcionario.Id }, funcionario);
 		}
 
-		[HttpPut("{id}")]
+		// PUT: api/Funcionarios/{id}
+		[HttpPut("{id:int}")]
 		public async Task<IActionResult> PutFuncionario(int id, Funcionario funcionario)
 		{
 			if (id != funcionario.Id)
-			{
-				return BadRequest();
-			}
+				return BadRequest("O ID da URL e do corpo não conferem.");
 
-			var funcionarioExistente = await _context.Funcionarios.FindAsync(id);
-			if (funcionarioExistente == null)
-			{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			// Busca a entidade existente no banco
+			var existente = await _context.Funcionarios
+										  .AsNoTracking()
+										  .FirstOrDefaultAsync(f => f.Id == id);
+			if (existente == null)
 				return NotFound();
+
+			// Aqui, façamos comparações campo a campo para registrar histórico
+			// Exemplo: se o nome mudou, registrar em historico
+			if (!string.Equals(existente.Nome, funcionario.Nome, StringComparison.OrdinalIgnoreCase))
+			{
+				await RegistrarAlteracao(
+					funcionarioId: id,
+					campo: "Nome",
+					valorAnterior: existente.Nome,
+					valorNovo: funcionario.Nome
+				);
 			}
 
-			// Comparar campos e registrar alterações
-			if (funcionarioExistente.Nome != funcionario.Nome)
-				await RegistrarAlteracao(id, "Nome", funcionarioExistente.Nome, funcionario.Nome);
+			if (!string.Equals(existente.Cargo, funcionario.Cargo, StringComparison.OrdinalIgnoreCase))
+			{
+				await RegistrarAlteracao(
+					funcionarioId: id,
+					campo: "Cargo",
+					valorAnterior: existente.Cargo,
+					valorNovo: funcionario.Cargo
+				);
+			}
 
-			if (funcionarioExistente.Cargo != funcionario.Cargo)
-				await RegistrarAlteracao(id, "Cargo", funcionarioExistente.Cargo, funcionario.Cargo);
+			if (existente.DataAdmissao != funcionario.DataAdmissao)
+			{
+				await RegistrarAlteracao(
+					funcionarioId: id,
+					campo: "DataAdmissao",
+					valorAnterior: existente.DataAdmissao.ToString("yyyy-MM-dd"),
+					valorNovo: funcionario.DataAdmissao.ToString("yyyy-MM-dd")
+				);
+			}
 
-			if (funcionarioExistente.Salario != funcionario.Salario)
-				await RegistrarAlteracao(id, "Salario", funcionarioExistente.Salario.ToString(), funcionario.Salario.ToString());
+			if (existente.Salario != funcionario.Salario)
+			{
+				await RegistrarAlteracao(
+					funcionarioId: id,
+					campo: "Salario",
+					valorAnterior: existente.Salario.ToString("F2"),
+					valorNovo: funcionario.Salario.ToString("F2")
+				);
+			}
 
-			// Atualiza os dados
-			funcionarioExistente.Nome = funcionario.Nome;
-			funcionarioExistente.Cargo = funcionario.Cargo;
-			funcionarioExistente.Salario = funcionario.Salario;
-			funcionarioExistente.Status = funcionario.Status;
+			if (!string.Equals(existente.Status, funcionario.Status, StringComparison.OrdinalIgnoreCase))
+			{
+				await RegistrarAlteracao(
+					funcionarioId: id,
+					campo: "Status",
+					valorAnterior: existente.Status,
+					valorNovo: funcionario.Status
+				);
+			}
 
-			await _context.SaveChangesAsync();
+			// Atualiza o funcionário propriamente dito
+			_context.Entry(funcionario).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!FuncionarioExiste(id))
+					return NotFound();
+
+				throw;
+			}
 
 			return NoContent();
 		}
@@ -107,6 +159,11 @@ namespace GestaoPessoalApi.Controllers
 
 		}
 
+		private bool FuncionarioExiste(int id)
+		{
+			return _context.Funcionarios.Any(e => e.Id == id);
+		}
+
 		private async Task RegistrarAlteracao(int funcionarioId, string campo, string valorAnterior, string valorNovo)
 		{
 			var historico = new HistoricoAlteracao
@@ -115,13 +172,12 @@ namespace GestaoPessoalApi.Controllers
 				CampoAlterado = campo,
 				ValorAnterior = valorAnterior,
 				ValorNovo = valorNovo,
-				DataHora = DateTime.Now
+				DataHora = DateTime.UtcNow
 			};
 
 			_context.Historicos.Add(historico);
 			await _context.SaveChangesAsync();
 		}
-
 
 		// GET: api/funcionarios/media-salario
 		[HttpGet("media-salario")]

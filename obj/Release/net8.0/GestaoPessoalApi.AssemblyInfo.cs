@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestaoPessoalApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea2e69c11ddb167fd27ada9592d61b84a2e4e97f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ed72432939d8388deb53c6db9a7d7adc71ec45e0")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestaoPessoalApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestaoPessoalApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

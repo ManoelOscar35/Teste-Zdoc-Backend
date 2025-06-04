@@ -1,4 +1,6 @@
+// Models/HistoricoAlteracao.cs
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoPessoalApi.Models
 {
@@ -6,17 +8,19 @@ namespace GestaoPessoalApi.Models
 	{
 		public int Id { get; set; }
 
-		// chave estrangeira para Funcionario
+		[Required]
 		public int FuncionarioId { get; set; }
 
-		// data e hora da alteração
+		[Required, StringLength(100)]
+		public string CampoAlterado { get; set; } = default!;
+
+		[Required, StringLength(200)]
+		public string ValorAnterior { get; set; } = default!;
+
+		[Required, StringLength(200)]
+		public string ValorNovo { get; set; } = default!;
+
+		[Required]
 		public DateTime DataHora { get; set; }
-
-		// campo que sofreu alteração
-		public string CampoAlterado { get; set; }
-
-		// os valores antigo e novo
-		public string ValorAnterior { get; set; }
-		public string ValorNovo { get; set; }
 	}
 }

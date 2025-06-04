@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// Data/AppDbContext.cs
+using Microsoft.EntityFrameworkCore;
 using GestaoPessoalApi.Models;
 
 namespace GestaoPessoalApi.Data
@@ -12,7 +13,7 @@ namespace GestaoPessoalApi.Data
 		public DbSet<Funcionario> Funcionarios { get; set; }
 		public DbSet<Ferias> Ferias { get; set; }
 
-		// ← Adicione esta linha para expor o DbSet de histórico de alterações
+		// Adicione (ou confirme que já existe) este DbSet:
 		public DbSet<HistoricoAlteracao> Historicos { get; set; }
 	}
 }
