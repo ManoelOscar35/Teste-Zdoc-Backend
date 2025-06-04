@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using GestaoPessoalApi.Data;
 using GestaoPessoalApi.Models;
 
+
+
 namespace GestaoPessoalApi.Controllers
 {
 	[ApiController]

@@ -1,6 +1,6 @@
-using System;
+Ôªøusing System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace GestaoPessoalApi.Models
 {
@@ -15,15 +15,17 @@ namespace GestaoPessoalApi.Models
 		public DateTime DataTermino { get; set; }
 
 		[Required]
+		[StringLength(50)]
 		public string Status { get; set; } = default!;
 
-		// -----------------------
-		// Aqui est· a ìchave estrangeiraî
-		// -----------------------
-		[ForeignKey("Funcionario")]
+		// ‚Üê chave estrangeira para Funcionario. O cliente s√≥ envia esse campo no JSON.
+		[Required]
 		public int FuncionarioId { get; set; }
 
-		// NavegaÁ„o para o Funcionario correspondente
+		// ‚Üê Navega√ß√£o: n√£o vamos vincul√°-la via JSON no PUT/POST.
+		//    O [JsonIgnore] evita que o model binder
+		//    espere algo no campo "Funcionario" do JSON.
+		[JsonIgnore]
 		public Funcionario Funcionario { get; set; } = default!;
 	}
 }

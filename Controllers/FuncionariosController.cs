@@ -107,13 +107,13 @@ namespace GestaoPessoalApi.Controllers
 
 		}
 
-		private async Task RegistrarAlteracao(int funcionarioId, string campo, string valorAntigo, string valorNovo)
+		private async Task RegistrarAlteracao(int funcionarioId, string campo, string valorAnterior, string valorNovo)
 		{
 			var historico = new HistoricoAlteracao
 			{
 				FuncionarioId = funcionarioId,
 				CampoAlterado = campo,
-				ValorAntigo = valorAntigo,
+				ValorAnterior = valorAnterior,
 				ValorNovo = valorNovo,
 				DataHora = DateTime.Now
 			};

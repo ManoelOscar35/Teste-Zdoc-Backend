@@ -1,33 +1,31 @@
+using System.Text.Json.Serialization;
 using GestaoPessoalApi.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// 1) Registra o DbContext (ajuste a connection string no appsettings.json)
+builder.Services.AddDbContext<AppDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
-// Add services to the container.
+// 2) Configura Controllers + ignora ciclos de referência
+builder.Services.AddControllers()
+	.AddJsonOptions(opts =>
+	{
+		opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+		opts.JsonSerializerOptions.MaxDepth = 64;
+	});
 
-builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// 3) Swagger (opcional, mas recomendado em dev)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 
 app.Run();
-
-

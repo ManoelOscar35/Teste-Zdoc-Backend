@@ -1,24 +1,18 @@
-using Microsoft.EntityFrameworkCore;
+Ôªøusing Microsoft.EntityFrameworkCore;
 using GestaoPessoalApi.Models;
 
 namespace GestaoPessoalApi.Data
 {
 	public class AppDbContext : DbContext
 	{
-		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+		public AppDbContext(DbContextOptions<AppDbContext> options)
+			: base(options)
+		{ }
 
-		public DbSet<Funcionario> Funcionarios { get; set; } = default!;
-		public DbSet<Ferias> Ferias { get; set; } = default!;
+		public DbSet<Funcionario> Funcionarios { get; set; }
+		public DbSet<Ferias> Ferias { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
-
-			// Caso queira explicitar, mas n„o È obrigatÛrio se vocÍ respeitar convenÁıes:
-			modelBuilder.Entity<Ferias>()
-						.HasOne(f => f.Funcionario)
-						.WithMany(func => func.Ferias)
-						.HasForeignKey(f => f.FuncionarioId);
-		}
+		// ‚Üê Adicione esta linha para expor o DbSet de hist√≥rico de altera√ß√µes
+		public DbSet<HistoricoAlteracao> Historicos { get; set; }
 	}
 }
