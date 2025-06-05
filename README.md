@@ -1,4 +1,4 @@
-1.2. Pré-requisitos
+Pré-requisitos
 .NET 7 SDK instalado
 
 SQL Server (ou outro provedor configurado no appsettings.json)
@@ -7,7 +7,7 @@ Visual Studio 2022/2019 ou VS Code (com extensão C#)
 
 (Opcional) SQL Server Management Studio para visualizar/dar manutenção no banco
 
-1.3. Configuração inicial
+Configuração inicial
 Clone este repositório ou acesse a pasta da API:
 
 bash
@@ -58,7 +58,7 @@ Editar
 dotnet ef database update
 Isso criará as tabelas: Funcionarios, Ferias, HistoricoAlteracao.
 
-1.5. Habilitar CORS e configurar JSON
+Habilitar CORS e configurar JSON
 O código já inclui em Program.cs:
 
 csharp
@@ -87,7 +87,7 @@ Isso garante que chamadas AJAX vindas do Angular não sejam bloqueadas.
 
 A configuração de JSON ignora ciclos de referência (por exemplo, Funcionario → Ferias → Funcionario).
 
-1.6. Executando a API
+Executando a API
 No terminal, a partir da pasta da API:
 
 bash
@@ -98,7 +98,7 @@ Por padrão, será iniciado em http://localhost:5117 (ou outra porta se configur
 
 Acesse http://localhost:5117/swagger para visualizar e testar endpoints via Swagger UI.
 
-1.7. Endpoints principais
+Endpoints principais
 Funcionários
 
 GET /api/Funcionarios
