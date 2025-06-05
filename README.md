@@ -14,7 +14,7 @@ bash
 Copiar
 Editar
 git clone https://github.com/ManoelOscar35/Teste-Zdoc-Backend.git
-cd Zdoc-API
+cd Teste-Zdoc-Backend
 Abra o appsettings.json e ajuste a string de conexão:
 
 jsonc
